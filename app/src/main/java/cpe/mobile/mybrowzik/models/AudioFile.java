@@ -1,4 +1,4 @@
-package cpe.mobile.mybrowzik;
+package cpe.mobile.mybrowzik.models;
 
 import java.util.Locale;
 

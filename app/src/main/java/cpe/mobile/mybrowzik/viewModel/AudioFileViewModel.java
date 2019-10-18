@@ -3,7 +3,7 @@ package cpe.mobile.mybrowzik.viewModel;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
-import cpe.mobile.mybrowzik.AudioFile;
+import cpe.mobile.mybrowzik.models.AudioFile;
 
 public class AudioFileViewModel extends BaseObservable {
 

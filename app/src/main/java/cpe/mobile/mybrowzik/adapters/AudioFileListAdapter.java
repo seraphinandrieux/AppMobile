@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import cpe.mobile.mybrowzik.AudioFile;
+import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioFileItemBinding;
+import cpe.mobile.mybrowzik.viewModel.AudioFileViewModel;
 
 public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdapter.ViewHolder>{
     List<AudioFile> audioFileList;
@@ -32,10 +33,7 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             AudioFile file = audioFileList.get(position);
-            holder.binding.title.setText(file.getTitle());
-            holder.binding.artist.setText(file.getArtist());
-            holder.binding.album.setText(file.getAlbum());
-            holder.binding.duration.setText(file.getDurationText());
+            holder.viewModel.setAudioFile(file);
         }
 
         @Override
@@ -45,11 +43,16 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
 
         static class ViewHolder extends RecyclerView.ViewHolder {
 
+
             private AudioFileItemBinding binding;
+
+            private AudioFileViewModel viewModel = new AudioFileViewModel();
+
 
             ViewHolder(AudioFileItemBinding binding) {
                 super(binding.getRoot());
                 this.binding = binding;
+                this.binding.setAudioFileViewModel(viewModel);
             }
         }
 }

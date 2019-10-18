@@ -4,12 +4,13 @@
     <data>
         <variable
             name="audioFileViewModel"
-            type="fr.mobdev.audioplayer.AudioFileViewModel"/>
+            type="cpe.mobile.mybrowzik.viewModel.AudioFileViewModel"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <TextView
+            android:text="@{audioFileViewModel.title}"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:id="@+id/title"
             app:layout_constraintStart_toStartOf="parent"
@@ -20,6 +21,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/album"
+            android:text="@{audioFileViewModel.album}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/dummy"
             app:layout_constraintBottom_toTopOf="@id/separator"
@@ -37,6 +39,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/artist"
+            android:text="@{audioFileViewModel.artist}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/separator"
@@ -45,6 +48,7 @@
             app:layout_constraintTop_toBottomOf="@id/title" />
         <TextView
             android:id="@+id/duration"
+            android:text="@{audioFileViewModel.duration}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/separator"
