@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioFileItemBinding;
@@ -28,6 +27,7 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
                     LayoutInflater.from(parent.getContext()),
                     R.layout.audio_file_item, parent,false
             );
+
             return new ViewHolder(binding);
         }
         @Override
@@ -38,13 +38,16 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
 
         @Override
         public int getItemCount() {
+
             return audioFileList.size();
+
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
 
 
             private AudioFileItemBinding binding;
+
 
             private AudioFileViewModel viewModel = new AudioFileViewModel();
 

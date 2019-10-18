@@ -9,11 +9,45 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioManagerFragmentBinding;
+import cpe.mobile.mybrowzik.listeners.MyListener;
+import cpe.mobile.mybrowzik.models.AudioFile;
+import cpe.mobile.mybrowzik.viewModel.AudioManagerViewModel;
 
 public class AudioManagerFragment extends Fragment {
+
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+
+        private AudioManagerFragmentBinding binding;
+
+
+        private AudioManagerViewModel viewModel = new AudioManagerViewModel();
+
+
+        ViewHolder(AudioManagerFragmentBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.binding.setAudioFileViewModel(viewModel);
+
+        }
+    }
+
+
+
+    MyListener listener = new MyListener() {
+        @Override
+        public void onSelectMusic(AudioFile audioFile) {
+            this.
+
+        }
+    };
+
+
 
     @Nullable
     @Override

@@ -1,16 +1,7 @@
 package cpe.mobile.mybrowzik.listeners;
 
+import cpe.mobile.mybrowzik.models.AudioFile;
+
 public interface MyListener {
-
-    public void onStartMusic();
-
-    public void onNextMusic();
-
-    public void onPreviousMusic();
-
-    public void onStopMusic();
-
-    public void onSelectMusic();
-
-
+    public void onSelectMusic(AudioFile audioFile);
 }

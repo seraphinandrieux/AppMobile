@@ -11,37 +11,22 @@ import cpe.mobile.mybrowzik.databinding.ActivityMainBinding;
 import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
 import cpe.mobile.mybrowzik.listeners.MyListener;
+import cpe.mobile.mybrowzik.models.AudioFile;
 
-public class MainActivity  extends AppCompatActivity implements MyListener {
+/*
+Question a poser :
+je veux faire un onclick sur mon item, c'est ou dans l'adapter ou avant l'appel de l'adapter, et ou ca car je vois pas mon objet
+mon listener plus dans mon fragment ? si oui dois-je instancier dans celui ci mon viewholder ? qu'est ce que vraiment mon view holder ? 
+
+
+
+
+ */
+public  class MainActivity  extends AppCompatActivity  {
 
     private ActivityMainBinding binding;
 
-    public MyListener listener = new MyListener() {
-        @Override
-        public void onStartMusic() {
 
-        }
-
-        @Override
-        public void onNextMusic() {
-
-        }
-
-        @Override
-        public void onPreviousMusic() {
-
-        }
-
-        @Override
-        public void onStopMusic() {
-
-        }
-
-        @Override
-        public void onSelectMusic() {
-
-        }
-    };
 
 
 
@@ -49,11 +34,15 @@ public class MainActivity  extends AppCompatActivity implements MyListener {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         AudioFileListFragment fragment = new AudioFileListFragment();
+
         AudioManagerFragment fragmentManager = new AudioManagerFragment();
-        transaction.replace(R.id.fragment_container,fragment);
+
+        transaction.replace(R.id.musicListLayout,fragment);
+
+        transaction.replace(R.id.musicManagerLayout,fragmentManager);
         //transaction.add(fragmentManager);
         transaction.commit();
-        fragment.setMyListener(listener);
+        //fragment.setMyListener(listener);
 
 
     }
