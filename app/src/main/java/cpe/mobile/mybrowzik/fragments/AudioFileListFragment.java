@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cpe.mobile.mybrowzik.AudioFile;
-import cpe.mobile.mybrowzik.adapters.AudioFileListAdapter;
 import cpe.mobile.mybrowzik.R;
+import cpe.mobile.mybrowzik.adapters.AudioFileListAdapter;
 import cpe.mobile.mybrowzik.databinding.AudioFileListFragmentBinding;
 
 public class AudioFileListFragment extends Fragment {
@@ -37,10 +37,6 @@ public class AudioFileListFragment extends Fragment {
 
         }
     }
-
-
-
-
 
 
     @Nullable
