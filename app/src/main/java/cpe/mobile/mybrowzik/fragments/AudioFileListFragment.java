@@ -14,21 +14,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.adapters.AudioFileListAdapter;
 import cpe.mobile.mybrowzik.databinding.AudioFileListFragmentBinding;
-import cpe.mobile.mybrowzik.listeners.MyListener;
 
 public class AudioFileListFragment extends Fragment {
 
     private List<AudioFile> fakeList = new ArrayList<>();
 
     private MyListener myListener;
-
     public void setMyListener(MyListener listener){
         myListener = listener;
     }
+
 
     public AudioFileListFragment() {
 
@@ -45,6 +45,10 @@ public class AudioFileListFragment extends Fragment {
         }
     }
 
+    public List<AudioFile> getAudioList(){
+        return fakeList;
+    }
+
 
     @Nullable
     @Override
@@ -55,7 +59,7 @@ public class AudioFileListFragment extends Fragment {
         AudioFileListFragmentBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.audio_file_list_fragment,container,false);
 
-        binding.audioFileList.setAdapter(new AudioFileListAdapter(fakeList));
+        binding.audioFileList.setAdapter(new AudioFileListAdapter(fakeList,myListener));
         binding.audioFileList.setLayoutManager(
                 new LinearLayoutManager(binding.getRoot().getContext())
         );

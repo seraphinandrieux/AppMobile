@@ -11,37 +11,19 @@ import cpe.mobile.mybrowzik.databinding.ActivityMainBinding;
 import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
 import cpe.mobile.mybrowzik.listeners.MyListener;
+import cpe.mobile.mybrowzik.models.AudioFile;
 
-public class MainActivity  extends AppCompatActivity implements MyListener {
+/*
+Question a poser :
+
+
+
+ */
+public  class MainActivity  extends AppCompatActivity  {
 
     private ActivityMainBinding binding;
 
-    public MyListener listener = new MyListener() {
-        @Override
-        public void onStartMusic() {
 
-        }
-
-        @Override
-        public void onNextMusic() {
-
-        }
-
-        @Override
-        public void onPreviousMusic() {
-
-        }
-
-        @Override
-        public void onStopMusic() {
-
-        }
-
-        @Override
-        public void onSelectMusic() {
-
-        }
-    };
 
 
 
@@ -49,11 +31,39 @@ public class MainActivity  extends AppCompatActivity implements MyListener {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         AudioFileListFragment fragment = new AudioFileListFragment();
+
         AudioManagerFragment fragmentManager = new AudioManagerFragment();
-        transaction.replace(R.id.fragment_container,fragment);
+
+        transaction.replace(R.id.musicListLayout,fragment);
+
+        transaction.replace(R.id.musicManagerLayout,fragmentManager);
+
+        MyListener listener = new MyListener() {
+            @Override
+            public void onSelectMusic(AudioFile audioFile) {
+                fragmentManager.updateCurrentMusic(audioFile);
+            }
+
+            @Override
+            public void onNextMusic() {
+
+                fragmentManager.changeCurrentMusic(fragment.getAudioList(),(+1));
+            }
+
+            @Override
+            public void onPreviousMusic() {
+                fragmentManager.changeCurrentMusic(fragment.getAudioList(),(-1));
+            }
+        };
+
+
+        fragment.setMyListener(listener);
+        fragmentManager.setMyListener(listener);
+
         //transaction.add(fragmentManager);
         transaction.commit();
-        fragment.setMyListener(listener);
+        //fragment.setMyListener(listener);
+
 
 
     }
@@ -63,6 +73,7 @@ public class MainActivity  extends AppCompatActivity implements MyListener {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         showStartup();
+
 
 
     }

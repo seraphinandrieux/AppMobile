@@ -1,6 +1,7 @@
 package cpe.mobile.mybrowzik.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioFileItemBinding;
@@ -16,9 +18,11 @@ import cpe.mobile.mybrowzik.viewModel.AudioFileViewModel;
 
 public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdapter.ViewHolder>{
     List<AudioFile> audioFileList;
-    public AudioFileListAdapter(List<AudioFile> fileList) {
+    MyListener myListener;
+    public AudioFileListAdapter(List<AudioFile> fileList, MyListener pMyListener) {
         assert fileList != null;
         audioFileList = fileList;
+        myListener    = pMyListener;
     }
     @NonNull
     @Override
@@ -28,6 +32,13 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
                     LayoutInflater.from(parent.getContext()),
                     R.layout.audio_file_item, parent,false
             );
+
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    myListener.onSelectMusic(binding.getAudioFileViewModel().getAudioFile());
+                }
+            });
             return new ViewHolder(binding);
         }
         @Override
@@ -38,13 +49,20 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
 
         @Override
         public int getItemCount() {
+
             return audioFileList.size();
+
         }
+
+
+
+
 
         static class ViewHolder extends RecyclerView.ViewHolder {
 
 
             private AudioFileItemBinding binding;
+
 
             private AudioFileViewModel viewModel = new AudioFileViewModel();
 

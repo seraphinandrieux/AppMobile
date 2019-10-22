@@ -5,11 +5,12 @@ import androidx.databinding.Bindable;
 
 import cpe.mobile.mybrowzik.models.AudioFile;
 
-public class AudioFileViewModel extends BaseObservable {
+public class AudioManagerViewModel extends BaseObservable {
 
     private AudioFile audioFile = new AudioFile();
 
     public void setAudioFile(AudioFile file) {
+
         audioFile = file;
         notifyChange();
     }
@@ -17,12 +18,14 @@ public class AudioFileViewModel extends BaseObservable {
     public AudioFile getAudioFile(){
         return audioFile;
     }
+
     @Bindable
     public String getArtist() {
 
         return audioFile.getArtist();
 
     }
+
 
     @Bindable
     public String getTitle() {

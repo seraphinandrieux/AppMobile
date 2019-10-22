@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="audioFileViewModel"
-            type="cpe.mobile.mybrowzik.viewModel.AudioFileViewModel"/>
+            name="audioManagerViewModel"
+            type="cpe.mobile.mybrowzik.viewModel.AudioManagerViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp" >
+        android:layout_height="83dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
                 android:id="@+id/currentMusic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{audioFileViewModel.title}" />
+                tools:text="@{audioManagerViewModel.title}" />
 
             <ProgressBar
                 android:id="@+id/progressMusicBar"
@@ -39,6 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:contentDescription="@android:string/untitled"
                     app:srcCompat="@android:drawable/ic_media_play" />
 
                 <ImageButton
@@ -46,6 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:contentDescription="@android:string/untitled"
                     app:srcCompat="@android:drawable/ic_media_pause" />
 
                 <ImageButton
@@ -53,6 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:contentDescription="@android:string/untitled"
                     app:srcCompat="@android:drawable/ic_media_previous" />
 
                 <ImageButton
@@ -60,6 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:contentDescription="@android:string/untitled"
                     app:srcCompat="@android:drawable/ic_media_next" />
             </LinearLayout>
 
