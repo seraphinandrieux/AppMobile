@@ -38,9 +38,16 @@ public class AudioManagerFragment extends Fragment {
 
     public void changeCurrentMusic(List<AudioFile> audioList,int pNextPrevious){
 
-        int indexCurrentMusic;
+        int indexCurrentMusic,indexNextMusic;
+
         indexCurrentMusic = audioList.indexOf(viewModel.getAudioFile());
-        viewModel.setAudioFile(audioList.get(indexCurrentMusic + pNextPrevious));
+        indexNextMusic      = indexCurrentMusic + pNextPrevious;
+        if (indexNextMusic<0){
+            indexNextMusic = audioList.size() -1;
+        }else if(indexNextMusic == audioList.size()){
+            indexNextMusic = 0;
+        }
+        viewModel.setAudioFile(audioList.get(indexNextMusic));
 
     }
 
