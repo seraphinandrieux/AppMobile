@@ -134,23 +134,38 @@ public  class MainActivity  extends AppCompatActivity  {
             @Override
             public void onSelectMusic(AudioFile audioFile) {
                 pFragmentManager.updateCurrentMusic(audioFile);
+                mService.initMediaPlayer(audioFile.getFilePath());
             }
 
             @Override
             public void onNextMusic() {
 
                 pFragmentManager.changeCurrentMusic(pfragmentList.getAudioList(), (+1));
+                try {
+                    mService.stop();
+                    mService.initMediaPlayer(pFragmentManager.getCurrentMusic().getFilePath());
+                    //mService.play();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
 
             @Override
             public void onPreviousMusic() {
                 pFragmentManager.changeCurrentMusic(pfragmentList.getAudioList(), (-1));
+                try {
+                    mService.stop();
+                    mService.initMediaPlayer(pFragmentManager.getCurrentMusic().getFilePath());
+                    //mService.play();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
 
             @Override
             public void onPlayMusic(String filePath) {
                 try {
-                    mService.play(filePath);
+                    mService.play();
                 } catch (Exception e) {
                     System.out.println(e);
                 }

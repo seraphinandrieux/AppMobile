@@ -23,14 +23,16 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
     public void onCreate() {
         super.onCreate();
         myMediaPlayer = new MediaPlayer(); // initialize it here
+
         myMediaPlayer.setOnPreparedListener(this);
+        myMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
 
     public void initMediaPlayer(String myPath){
         //myMediaPlayer = new MediaPlayer();
 
 
-        myMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         try {
             myMediaPlayer.setDataSource(myPath);
             myMediaPlayer.prepareAsync();
@@ -54,22 +56,21 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
         return START_STICKY_COMPATIBILITY;
     }
 
-    public void play(String path) throws IOException {
-        int currentPos;
-        currentPos = myMediaPlayer.getCurrentPosition();
-        if(!musicOnPause) {
+    public void play() throws IOException {
 
-            initMediaPlayer(path);
-        }else{
             myMediaPlayer.start();
-            musicOnPause = false;
-        }
+
+
     }
 
+
+
     public void stop() {
+
         myMediaPlayer.stop();
-        myMediaPlayer.release();
-        myMediaPlayer = null;
+        myMediaPlayer.reset();
+        //myMediaPlayer.release();
+        //myMediaPlayer = null;
 
     }
 

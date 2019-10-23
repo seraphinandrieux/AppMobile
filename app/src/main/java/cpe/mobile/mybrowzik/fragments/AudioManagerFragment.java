@@ -85,6 +85,10 @@ public class AudioManagerFragment extends Fragment {
 
     }
 
+    public AudioFile getCurrentMusic(){
+        return viewModel.getAudioFile();
+    }
+
 
 
 
