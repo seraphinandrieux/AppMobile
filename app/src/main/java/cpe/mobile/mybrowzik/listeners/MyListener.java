@@ -8,4 +8,8 @@ public interface MyListener {
     public void onNextMusic();
 
     public void onPreviousMusic();
+
+    public void onPlayMusic(String filePath);
+
+    public void onPauseMusic();
 }

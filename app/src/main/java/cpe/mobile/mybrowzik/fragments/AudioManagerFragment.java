@@ -1,6 +1,10 @@
 package cpe.mobile.mybrowzik.fragments;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,7 @@ import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioManagerFragmentBinding;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
+import cpe.mobile.mybrowzik.services.PlayerService;
 import cpe.mobile.mybrowzik.viewModel.AudioManagerViewModel;
 
 public class AudioManagerFragment extends Fragment {
@@ -24,7 +29,13 @@ public class AudioManagerFragment extends Fragment {
 
     private AudioManagerViewModel viewModel = new AudioManagerViewModel();
     private MyListener myListener;
+
+
+
+
+
     public void setMyListener(MyListener listener){
+
         myListener = listener;
     }
 
@@ -32,7 +43,30 @@ public class AudioManagerFragment extends Fragment {
 
 
 
+
+
+
+            /*new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            LocalBinder binder = (LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };*/
+
+//---------------------------------------------------------------------------------
+
     public void updateCurrentMusic(AudioFile file){
+
         viewModel.setAudioFile(file);
     }
 
@@ -50,6 +84,8 @@ public class AudioManagerFragment extends Fragment {
         viewModel.setAudioFile(audioList.get(indexNextMusic));
 
     }
+
+
 
 
 
@@ -76,6 +112,23 @@ public class AudioManagerFragment extends Fragment {
                 myListener.onPreviousMusic();
             }
         });
+
+        binding.PlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myListener.onPlayMusic(viewModel.getPath());
+            }
+        });
+
+        binding.PauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myListener.onPauseMusic();
+            }
+        });
+
         return binding.getRoot();
     }
+
+
 }

@@ -41,6 +41,13 @@ public class AudioManagerViewModel extends BaseObservable {
 
     }
 
+
+    public String getPath() {
+
+        return audioFile.getFilePath();
+
+    }
+
     @Bindable
     public String getDuration() {
 

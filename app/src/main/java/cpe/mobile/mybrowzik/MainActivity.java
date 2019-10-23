@@ -8,12 +8,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -25,6 +31,7 @@ import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
+import cpe.mobile.mybrowzik.services.PlayerService;
 
 /*
 Question a poser :
@@ -41,8 +48,44 @@ public  class MainActivity  extends AppCompatActivity  {
     final static int MY_PERMISSION_REQUEST_CODE=1; // valeur arbitraire
     final static String MY_PERMISSION_NAME=Manifest.permission.READ_EXTERNAL_STORAGE;
 
+    PlayerService mService;
+    boolean mBound = false;
+
+//----------------------------------------------------Main functions-----------------------------------------------------------------------------
+    public void showStartup() {
+        makeActionWithPermission();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        AudioFileListFragment fragment = new AudioFileListFragment(myMusicList);
+
+        AudioManagerFragment fragmentManager = new AudioManagerFragment();
+
+        transaction.replace(R.id.musicListLayout,fragment);
+
+        transaction.replace(R.id.musicManagerLayout,fragmentManager);
+
+        MyListener listener = initListener(fragment,fragmentManager);
 
 
+        fragment.setMyListener(listener);
+        fragmentManager.setMyListener(listener);
+
+
+        transaction.commit();
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        showStartup();
+
+
+
+    }
+
+//---------------------------------------------------Permission functions -------------------------------------------------------------------------
 
     public void makeActionWithPermission(){
         // A-t-on la permission de le faire ?
@@ -82,117 +125,128 @@ public  class MainActivity  extends AppCompatActivity  {
         }
     }
 
-    //const MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = "non";
 
-    public void getPermission(){
-        // Here, thisActivity is the current activity
-        makeActionWithPermission();
-    }
+//-----------------------------------------------------Listener functions------------------------------------------------------------
 
 
-
-    public List<AudioFile> getPhoneMusic(){
-
-        //requestPermissions(android.app.Activity, String[], int);
-
-        //Context  context = (Context)this;
-        //Uri uri = Environment.GetExternalStoragePublicDirectory("DCIM").AbsolutePath
-        //Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; // La carte SD
-        /*Uri uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI; // La carte SD
-        System.out.println("salut");
-        System.out.println(uri + "/Music");
-        String[]  projection = {MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE,MediaStore.Audio.Media.ARTIST}; //chemin du fichier, titre, artist
-        System.out.println(projection);
-        Cursor cursor = this.getContentResolver().query(uri,projection,null,null,null);
-        System.out.println(cursor);*/
-        ContentResolver musicResolver = getContentResolver();
-        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI ;
-        String[]  projection = {MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE,MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.ALBUM,MediaStore.Audio.Media.DURATION,MediaStore.Audio.Media.YEAR}; //chemin du fichier, titre, artist
-        System.out.println(projection);
-
-
-
-        Cursor musicCursor = musicResolver.query(musicUri, projection, null, null, null);
-
-        List<AudioFile> myAudioList = new ArrayList<>();;
-
-            if(musicCursor!=null && musicCursor.moveToFirst()){
-                //get columns
-
-
-
-                //add songs to list
-                do {
-                    //long thisId = musicCursor.getLong(idColumn);
-                    //String testTitre = musicCursor.title;
-                    String thisTitle = musicCursor.getString(1);
-                    String thisArtist = musicCursor.getString(2);
-                    String thisAlbum = musicCursor.getString(3);
-                    String thisFilePath = musicCursor.getString(0);
-                    int thisYear = musicCursor.getInt(5);
-                    System.out.println(musicCursor.getInt(4));
-                    int thisDuration = (musicCursor.getInt(4)/1000);
-
-
-                    myAudioList.add(new AudioFile(thisTitle, thisArtist, thisAlbum, thisYear, thisDuration, thisFilePath));
-                }
-                while (musicCursor.moveToNext());
-            }
-            return myAudioList;
-    }
-
-    public void showStartup() {
-        getPermission();
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        AudioFileListFragment fragment = new AudioFileListFragment(myMusicList);
-
-        AudioManagerFragment fragmentManager = new AudioManagerFragment();
-
-        transaction.replace(R.id.musicListLayout,fragment);
-
-        transaction.replace(R.id.musicManagerLayout,fragmentManager);
-
+    public MyListener initListener(AudioFileListFragment pfragmentList,AudioManagerFragment pFragmentManager){
         MyListener listener = new MyListener() {
             @Override
             public void onSelectMusic(AudioFile audioFile) {
-                fragmentManager.updateCurrentMusic(audioFile);
+                pFragmentManager.updateCurrentMusic(audioFile);
             }
 
             @Override
             public void onNextMusic() {
 
-                fragmentManager.changeCurrentMusic(fragment.getAudioList(),(+1));
+                pFragmentManager.changeCurrentMusic(pfragmentList.getAudioList(), (+1));
             }
 
             @Override
             public void onPreviousMusic() {
-                fragmentManager.changeCurrentMusic(fragment.getAudioList(),(-1));
+                pFragmentManager.changeCurrentMusic(pfragmentList.getAudioList(), (-1));
+            }
+
+            @Override
+            public void onPlayMusic(String filePath) {
+                try {
+                    mService.play(filePath);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+            }
+
+            @Override
+            public void onPauseMusic() {
+
+                mService.pause();
+
+
             }
         };
+        return listener ;
+    }
 
 
-        fragment.setMyListener(listener);
-        fragmentManager.setMyListener(listener);
-
-        //transaction.add(fragmentManager);
-        transaction.commit();
-        //fragment.setMyListener(listener);
+    //---------------------------------------Music functions-----------------------------------------------
 
 
 
+    public List<AudioFile> getPhoneMusic(){
+
+        List<AudioFile> myAudioList = new ArrayList<>();
+        ContentResolver musicResolver = getContentResolver();
+
+        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI ; //define path inside the phone
+
+        // La projection va filtrer ce que le curseur va recuperer du resolver et va le stocker en colonne.
+        // Exemple col 0 on contient data, la 1 le titre etc ....
+        String[]  projection = {MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.TITLE,MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.ALBUM,MediaStore.Audio.Media.DURATION,MediaStore.Audio.Media.YEAR}; //chemin du fichier, titre, artist
+
+        // on pointe sur le resolver en filtrant avec la projection
+
+        Cursor musicCursor = musicResolver.query(musicUri, projection, null, null, null);
+
+
+
+        if(musicCursor!=null && musicCursor.moveToFirst()){
+             //add songs to list
+            do {
+
+                String thisTitle = musicCursor.getString(1);
+                String thisArtist = musicCursor.getString(2);
+                String thisAlbum = musicCursor.getString(3);
+                String thisFilePath = musicCursor.getString(0);
+                int thisYear = musicCursor.getInt(5);
+                int thisDuration = (int)(musicCursor.getLong(4)/1000);
+
+
+                myAudioList.add(new AudioFile(thisTitle, thisArtist, thisAlbum, thisYear, thisDuration, thisFilePath));
+            }
+            while (musicCursor.moveToNext());
+        }
+
+
+        onStart();
+        return myAudioList;
+
+    }
+
+
+//--------------------------------------------Services functions---------------------------------------
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to PlayerService
+        Intent intent = new Intent(this, PlayerService.class);
+        bindService(intent, connection, this.BIND_AUTO_CREATE);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        showStartup();
-
-
-
+    protected void onStop() {
+        super.onStop();
+        unbindService(connection);
+        mBound = false;
     }
+
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) iBinder;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBound = false;
+        }
+    };
 
 
 }
