@@ -15,10 +15,12 @@ import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioFileItemBinding;
 import cpe.mobile.mybrowzik.viewModel.AudioFileViewModel;
+import cpe.mobile.mybrowzik.webServices.LastFMService;
 
 public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdapter.ViewHolder>{
     List<AudioFile> audioFileList;
     MyListener myListener;
+
     public AudioFileListAdapter(List<AudioFile> fileList, MyListener pMyListener) {
         assert fileList != null;
         audioFileList = fileList;
