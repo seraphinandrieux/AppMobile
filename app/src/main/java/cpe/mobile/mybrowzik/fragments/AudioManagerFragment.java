@@ -1,6 +1,10 @@
 package cpe.mobile.mybrowzik.fragments;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,41 +15,58 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import java.util.List;
+
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioManagerFragmentBinding;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
+
+import cpe.mobile.mybrowzik.services.PlayerService;
+
 import cpe.mobile.mybrowzik.viewModel.AudioManagerViewModel;
 
 public class AudioManagerFragment extends Fragment {
 
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    private AudioManagerViewModel viewModel = new AudioManagerViewModel();
+    private MyListener myListener;
 
 
-        private AudioManagerFragmentBinding binding;
 
 
-        private AudioManagerViewModel viewModel = new AudioManagerViewModel();
 
+    public void setMyListener(MyListener listener){
 
-        ViewHolder(AudioManagerFragmentBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-            this.binding.setAudioFileViewModel(viewModel);
+        myListener = listener;
 
-        }
     }
 
+    public void updateCurrentMusic(AudioFile file){
 
+        viewModel.setAudioFile(file);
+    }
 
-    MyListener listener = new MyListener() {
-        @Override
-        public void onSelectMusic(AudioFile audioFile) {
-            this.
+    public void changeCurrentMusic(List<AudioFile> audioList,int pNextPrevious){
 
+        int indexCurrentMusic,indexNextMusic;
+
+        indexCurrentMusic = audioList.indexOf(viewModel.getAudioFile());
+        indexNextMusic      = indexCurrentMusic + pNextPrevious;
+        if (indexNextMusic<0){
+            indexNextMusic = audioList.size() -1;
+        }else if(indexNextMusic == audioList.size()){
+            indexNextMusic = 0;
         }
-    };
+        viewModel.setAudioFile(audioList.get(indexNextMusic));
+
+    }
+
+    public AudioFile getCurrentMusic(){
+        return viewModel.getAudioFile();
+    }
+
 
 
 
@@ -57,6 +78,37 @@ public class AudioManagerFragment extends Fragment {
 
         AudioManagerFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.audio_manager_fragment,container,false);
 
+            binding.setAudioManagerViewModel(viewModel);
+            binding.NextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    myListener.onNextMusic();
+                }
+            });
+
+        binding.PreviousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myListener.onPreviousMusic();
+            }
+        });
+
+        binding.PlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myListener.onPlayMusic(viewModel.getPath());
+            }
+        });
+
+        binding.PauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myListener.onPauseMusic();
+            }
+        });
+
         return binding.getRoot();
     }
+
+
 }

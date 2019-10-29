@@ -4,13 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="audioFileViewModel"
+
+            name="audioManagerViewModel"
+
             type="cpe.mobile.mybrowzik.viewModel.AudioManagerViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp" >
+        android:layout_height="83dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,7 +23,9 @@
                 android:id="@+id/currentMusic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="@{audioFileViewModel.title}" />
+
+                tools:text="@{audioManagerViewModel.title}" />
+
 
             <ProgressBar
                 android:id="@+id/progressMusicBar"

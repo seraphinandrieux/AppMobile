@@ -9,11 +9,19 @@ public class AudioManagerViewModel extends BaseObservable {
 
     private AudioFile audioFile = new AudioFile();
 
-    public void setAudioFile2(AudioFile file) {
+
+    public void setAudioFile(AudioFile file) {
+
 
         audioFile = file;
         notifyChange();
     }
+
+
+    public AudioFile getAudioFile(){
+        return audioFile;
+    }
+
 
     @Bindable
     public String getArtist() {
@@ -21,6 +29,7 @@ public class AudioManagerViewModel extends BaseObservable {
         return audioFile.getArtist();
 
     }
+
 
     @Bindable
     public String getTitle() {
@@ -33,6 +42,13 @@ public class AudioManagerViewModel extends BaseObservable {
     public String getAlbum() {
 
         return audioFile.getAlbum();
+
+    }
+
+
+    public String getPath() {
+
+        return audioFile.getFilePath();
 
     }
 

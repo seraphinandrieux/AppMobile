@@ -12,6 +12,17 @@ public class AudioFile {
     private int year;
     private int duration;
 
+    public AudioFile(String pTitle,String pArtist,String pAlbum,int pyear,int pDuration,String pFilePath){
+        title = pTitle;
+        artist = pArtist;
+        album  = pAlbum;
+        year   = pyear;
+        duration = pDuration;
+        filePath = pFilePath;
+    }
+
+    public AudioFile(){}
+
     public String getTitle() {
         return title;
     }
