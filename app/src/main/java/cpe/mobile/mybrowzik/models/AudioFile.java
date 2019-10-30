@@ -1,4 +1,8 @@
-package cpe.mobile.mybrowzik;
+package cpe.mobile.mybrowzik.models;
+
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
 
@@ -11,6 +15,21 @@ public class AudioFile {
     private String genre;
     private int year;
     private int duration;
+    private String albumPath;
+    private ImageView albumImage;
+
+    public AudioFile(String pTitle,String pArtist,String pAlbum,int pyear,int pDuration,String pFilePath){
+        title = pTitle;
+        artist = pArtist;
+        album  = pAlbum;
+        year   = pyear;
+        duration = pDuration;
+        filePath = pFilePath;
+        //albumImage = findViewById(R.id.imageView2);
+
+    }
+
+    public AudioFile(){}
 
     public String getTitle() {
         return title;
@@ -63,6 +82,21 @@ public class AudioFile {
 
     public int getDuration() {
         return duration;
+    }
+
+    public String getAlbumPath() { return albumPath; }
+
+    public ImageView getAlbumImage(){
+        return albumImage;
+    }
+
+    public void setAlbumImage(ImageView albumImage){ this.albumImage = albumImage;}
+
+    public void setAlbumPath(String albumPath) {
+
+        this.albumPath = albumPath;
+        //TODO put the load images in the second thread (the one which is used to webservices)
+
     }
 
     public String getDurationText() {
