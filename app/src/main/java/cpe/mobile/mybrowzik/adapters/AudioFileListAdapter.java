@@ -3,6 +3,7 @@ package cpe.mobile.mybrowzik.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cpe.mobile.mybrowzik.listeners.MyHttpListener;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
@@ -20,6 +22,8 @@ import cpe.mobile.mybrowzik.webServices.LastFMService;
 public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdapter.ViewHolder>{
     List<AudioFile> audioFileList;
     MyListener myListener;
+    MyHttpListener myHttpListener;
+
 
     public AudioFileListAdapter(List<AudioFile> fileList, MyListener pMyListener) {
         assert fileList != null;
@@ -48,7 +52,15 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             AudioFile file = audioFileList.get(position);
+
+
+            MyHttpListener myHttpListener = initMyHttpListener(file,holder);
+
+            LastFMService myFmService = new LastFMService(file,myHttpListener); // we start a thread which will call the webservices
+            myFmService.start();
+
             holder.viewModel.setAudioFile(file);
+
         }
 
         @Override
@@ -58,6 +70,34 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
 
         }
 
+    public MyHttpListener initMyHttpListener(AudioFile file, ViewHolder holder) {
+        MyHttpListener httpListener = new MyHttpListener() {
+            @Override
+            public void setAlbum(String album) { //update the album name
+
+                file.setAlbum(album);
+                holder.viewModel.setAudioFile(file);
+
+            }
+
+            @Override
+            public void setAlbumPath(String albumPath) { //update the album link image
+
+
+                file.setAlbumPath(albumPath);
+                holder.viewModel.setAudioFile(file);
+
+            }
+
+            @Override
+            public ImageView getMyCurrentImageView(){ // allows to get back the image album's imageView
+                return holder.binding.albumImage;
+            }
+
+        };
+        return httpListener;
+
+    }
 
 
 
@@ -77,4 +117,17 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
                 this.binding.setAudioFileViewModel(viewModel);
             }
         }
+
+       /* public MyHttpListener initMyHttpListener(AudioFileViewModel pViewModel, LastFMService myFmService){
+            MyHttpListener httpListener = new MyHttpListener() {
+            @Override
+            public String getAlbum(String title, String artist) {
+                myFmService.getInfoTrack(pViewModel.getTitle(),pViewModel.getArtist());
+                return "ok";
+            }
+        };
+        return httpListener ;
+    }*/
+
+
 }

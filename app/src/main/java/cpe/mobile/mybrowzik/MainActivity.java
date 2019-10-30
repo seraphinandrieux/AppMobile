@@ -14,11 +14,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -31,7 +30,8 @@ import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
-<<<<<<< HEAD
+import cpe.mobile.mybrowzik.services.PlayerService;
+
 
 /*
 Question a poser :
@@ -42,13 +42,11 @@ mon listener plus dans mon fragment ? si oui dois-je instancier dans celui ci mo
 
 
  */
-public  class MainActivity  extends AppCompatActivity  {
-
-    private ActivityMainBinding binding;
 
 
-=======
-import cpe.mobile.mybrowzik.services.PlayerService;
+
+
+
 
 /*
 Question a poser :

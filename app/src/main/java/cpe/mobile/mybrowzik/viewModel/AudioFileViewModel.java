@@ -1,15 +1,20 @@
 package cpe.mobile.mybrowzik.viewModel;
 
+import android.widget.ImageView;
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
+import cpe.mobile.mybrowzik.listeners.MyHttpListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.webServices.LastFMService;
 
 public class AudioFileViewModel extends BaseObservable {
 
 
-    LastFMService fmService = new LastFMService();
+    //LastFMService fmService = new LastFMService();
+
+
 
     private AudioFile audioFile = new AudioFile();
 
@@ -37,11 +42,26 @@ public class AudioFileViewModel extends BaseObservable {
 
     @Bindable
     public String getAlbum() {
-        fmService.start();
-        fmService.getInfoTrack(audioFile.getTitle(),audioFile.getArtist());
+        //fmService.start();
+        //fmService.getInfoTrack(audioFile.getTitle(),audioFile.getArtist());
         return audioFile.getAlbum();
 
     }
+
+    @Bindable
+    public String getAlbumPath() {
+
+        return audioFile.getAlbumPath();
+
+    }
+
+    @Bindable
+    public ImageView getAlbumImage() {
+
+        return audioFile.getAlbumImage();
+
+    }
+
 
     @Bindable
     public String getDuration() {
