@@ -10,11 +10,16 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -25,12 +30,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpe.mobile.mybrowzik.DBManager.DBManager;
+import cpe.mobile.mybrowzik.DBManager.DBOpenHelper;
 import cpe.mobile.mybrowzik.databinding.ActivityMainBinding;
 import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.services.PlayerService;
+import cpe.mobile.mybrowzik.webServices.LastFMService;
 
 
 /*
@@ -66,6 +74,14 @@ public  class MainActivity  extends AppCompatActivity  {
     PlayerService mService;
     boolean mBound = false;
 
+    private static Context context;
+
+
+
+
+
+
+
 //----------------------------------------------------Main functions-----------------------------------------------------------------------------
     public void showStartup() {
         makeActionWithPermission();
@@ -94,10 +110,19 @@ public  class MainActivity  extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        MainActivity.context = getApplicationContext();
+
+
+
         showStartup();
 
 
 
+    }
+
+    public static Context getMainActivityContext(){
+        return MainActivity.context;
     }
 
 //---------------------------------------------------Permission functions -------------------------------------------------------------------------
@@ -277,6 +302,11 @@ public  class MainActivity  extends AppCompatActivity  {
             mBound = false;
         }
     };
+
+
+
+
+//--------------------------------------------DB functions---------------------------------------
 
 
 }

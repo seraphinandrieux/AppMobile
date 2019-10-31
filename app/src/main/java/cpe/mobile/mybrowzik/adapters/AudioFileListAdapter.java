@@ -1,5 +1,8 @@
 package cpe.mobile.mybrowzik.adapters;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cpe.mobile.mybrowzik.DBManager.DBOpenHelper;
+import cpe.mobile.mybrowzik.MainActivity;
 import cpe.mobile.mybrowzik.listeners.MyHttpListener;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
@@ -56,8 +61,12 @@ public class AudioFileListAdapter extends RecyclerView.Adapter<AudioFileListAdap
 
             MyHttpListener myHttpListener = initMyHttpListener(file,holder);
 
+
+
             LastFMService myFmService = new LastFMService(file,myHttpListener); // we start a thread which will call the webservices
             myFmService.start();
+
+
 
             holder.viewModel.setAudioFile(file);
 
