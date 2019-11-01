@@ -15,6 +15,8 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -23,13 +25,19 @@ import android.provider.MediaStore;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cpe.mobile.mybrowzik.databinding.ActivityMainBinding;
+import cpe.mobile.mybrowzik.db.DBOpenHelper;
 import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
+import cpe.mobile.mybrowzik.listeners.MyDBListener;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
+import cpe.mobile.mybrowzik.models.DbConstants;
+import cpe.mobile.mybrowzik.models.DbRequestType;
+import cpe.mobile.mybrowzik.services.DBService;
 import cpe.mobile.mybrowzik.services.PlayerService;
 
 
@@ -58,13 +66,15 @@ public  class MainActivity  extends AppCompatActivity  {
 
     private ActivityMainBinding binding;
     private List<AudioFile> myMusicList = new ArrayList<>();
-
+    public SQLiteDatabase db;
+    public DBOpenHelper dbOpenHelper;
 
     final static int MY_PERMISSION_REQUEST_CODE=1; // valeur arbitraire
     final static String MY_PERMISSION_NAME=Manifest.permission.READ_EXTERNAL_STORAGE;
 
     PlayerService mService;
     boolean mBound = false;
+
 
 //----------------------------------------------------Main functions-----------------------------------------------------------------------------
     public void showStartup() {
@@ -82,6 +92,9 @@ public  class MainActivity  extends AppCompatActivity  {
 
         MyListener listener = initListener(fragment,fragmentManager);
         fragment.setMyListener(listener);
+
+        MyDBListener myDBListener = initMyDBListener(new DBService(db));
+        fragment.setMyDBListener(myDBListener);
         fragmentManager.setMyListener(listener);
 
 
@@ -93,12 +106,21 @@ public  class MainActivity  extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        dbOpenHelper = new DBOpenHelper(this, DbConstants.DATABASE_NAME, null, DbConstants.DATABASE_VERSION);
+        openDB();
+
+        //writeOnDB();
+        //getDbInfo();
         showStartup();
 
 
 
     }
+
+
 
 //---------------------------------------------------Permission functions -------------------------------------------------------------------------
 
@@ -198,7 +220,120 @@ public  class MainActivity  extends AppCompatActivity  {
         return listener ;
     }
 
+    //----------------------------------------Listener DB + DB debug functions----------------------------------------------
 
+    public MyDBListener initMyDBListener(DBService myDbService){
+        MyDBListener myDBListener = new MyDBListener() {
+            @Override
+            public void updateMyDB(String title, String artist, String palbum, String genre, Integer year, String imageAlbumUrl) {
+
+                ArrayList<String> myArrayList = new ArrayList<String>();
+                myArrayList.add(palbum);
+
+                //System.out.println("Mon nouveau string " +GetStringArray(myArrayList)[0]);
+
+
+                System.out.println("params" +title+ artist+ palbum+ genre+ year+ imageAlbumUrl );
+                if(!myDbService.checkIfExist(DbConstants.ALBUM_TABLE,GetStringArray(myArrayList),DbConstants.KEY_COL_ALBUM)){
+                    System.out.println("je insert un album");
+                    myDbService.executeRequest(DbRequestType.INSERT,DbConstants.ALBUM_TABLE,null,new String[]{palbum,imageAlbumUrl,year.toString()});
+                    System.out.println("fin de l'insert");
+                }
+                if(!myDbService.checkIfExist(DbConstants.GENRE_TABLE,new String[]{genre},DbConstants.KEY_COL_GENRE)){
+                    System.out.println("je insert un genre");
+                    myDbService.executeRequest(DbRequestType.INSERT,DbConstants.GENRE_TABLE,null,new String[]{genre});
+                }
+                if(!myDbService.checkIfExist(DbConstants.ARTIST_TABLE,new String[]{artist},DbConstants.KEY_COL_ARTIST)){
+                    myDbService.executeRequest(DbRequestType.INSERT,DbConstants.ARTIST_TABLE,null,new String[]{artist});
+                }
+                if(!myDbService.checkIfExist(DbConstants.MUSIC_TABLE,new String[]{title},DbConstants.KEY_COL_TITLE)){
+                    Integer artistID,albumID,genreID;
+                    artistID = myDbService.getIDfromTable(DbConstants.ARTIST_TABLE,DbConstants.KEY_COL_ARTIST+"=?",new String[]{artist});
+                    albumID  = myDbService.getIDfromTable(DbConstants.ALBUM_TABLE,DbConstants.KEY_COL_ALBUM+"=?",new String[]{palbum});
+                    genreID  = myDbService.getIDfromTable(DbConstants.GENRE_TABLE,DbConstants.KEY_COL_GENRE+"=?",new String[]{genre});
+                    myDbService.executeRequest(DbRequestType.INSERT,DbConstants.MUSIC_TABLE,null,new String[]{title,artistID.toString(),albumID.toString(),genreID.toString()});
+                }
+            }
+
+            @Override
+            public String getAlbumFromID(Integer id){
+
+                return myDbService.getListfromTable(DbConstants.ALBUM_TABLE,DbConstants.KEY_COL_ID,new String[]{id.toString()},DbConstants.KEY_COL_ALBUM).get(0).toString();
+
+            }
+            @Override
+            public String getGenreFromID(Integer id){
+                return myDbService.getListfromTable(DbConstants.GENRE_TABLE,DbConstants.KEY_COL_ID,new String[]{id.toString()},DbConstants.KEY_COL_GENRE).get(0).toString();
+
+            }
+            @Override
+            public String getArtistFromID(Integer id){
+                return myDbService.getListfromTable(DbConstants.ARTIST_TABLE,DbConstants.KEY_COL_ID,new String[]{id.toString()},DbConstants.KEY_COL_ARTIST).get(0).toString();
+
+            }
+            @Override
+            public String getImageAlbumFromAlbumID(Integer id){
+
+                return myDbService.getListfromTable(DbConstants.ALBUM_TABLE,DbConstants.KEY_COL_ID,new String[]{id.toString()},DbConstants.KEY_COL_IMAGE_URL).get(0).toString();
+
+            }
+
+            @Override
+            public Integer getYearFromAlbumID(Integer id){
+                return Integer.parseInt(myDbService.getListfromTable(DbConstants.ALBUM_TABLE,DbConstants.KEY_COL_ID,new String[]{id.toString()},DbConstants.KEY_COL_YEAR).get(0).toString());
+
+            }
+            @Override
+            public Integer getAlbumIDFromTitle(String title){
+                return Integer.parseInt(myDbService.getListfromTable(DbConstants.MUSIC_TABLE,DbConstants.KEY_COL_TITLE,new String[]{title},DbConstants.KEY_COL_ALBUM_ID).get(0).toString());
+
+            }
+            @Override
+            public Integer getArtistIDFromTitle(String title){
+                return Integer.parseInt(myDbService.getListfromTable(DbConstants.MUSIC_TABLE,DbConstants.KEY_COL_TITLE,new String[]{title},DbConstants.KEY_COL_ARTIST_ID).get(0).toString());
+                }
+            @Override
+            public Integer getGenreIDFromTitle(String title){
+                return Integer.parseInt(myDbService.getListfromTable(DbConstants.MUSIC_TABLE,DbConstants.KEY_COL_TITLE,new String[]{title},DbConstants.KEY_COL_GENRE_ID).get(0).toString());
+
+            }
+            @Override
+            public boolean isInMyDB(String title){
+                boolean lreturn=false;
+                if(myDbService.checkIfExist(DbConstants.MUSIC_TABLE,new String[]{title},DbConstants.KEY_COL_TITLE)){
+                    lreturn = true;
+                }
+                return lreturn;
+            }
+        };
+
+        return myDBListener;
+    }
+
+    public void getDbInfo(){
+        DBService dbService = new DBService(db);
+        System.out.println("on va rentrer dans le check de la DB");
+        System.out.println(dbService.getListfromTable(DbConstants.ALBUM_TABLE,null,null,DbConstants.KEY_COL_IMAGE_URL));
+        System.out.println(dbService.getListfromTable(DbConstants.MUSIC_TABLE,null,null,DbConstants.KEY_COL_TITLE));
+        System.out.println(dbService.getListfromTable(DbConstants.GENRE_TABLE,null,null,DbConstants.KEY_COL_GENRE));
+        System.out.println("fin du check");
+    }
+
+    public static String[] GetStringArray(ArrayList<String> arr)
+    {
+
+        // declaration and initialise String Array
+        String str[] = new String[arr.size()];
+
+        // ArrayList to Array Conversion
+        for (int j = 0; j < arr.size(); j++) {
+
+            // Assign each value to String array
+            str[j] = arr.get(j);
+        }
+
+        return str;
+    }
     //---------------------------------------Music functions-----------------------------------------------
 
 
@@ -277,6 +412,36 @@ public  class MainActivity  extends AppCompatActivity  {
             mBound = false;
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        openDB();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //closeDB();
+    }
+
+    /**
+     * * Open the database* *
+     *
+     * @throws SQLiteException
+     */
+    public void openDB() throws SQLiteException {
+        try {
+            db = dbOpenHelper.getWritableDatabase();
+        } catch (SQLiteException ex) {
+            db = dbOpenHelper.getReadableDatabase();
+        }
+    }
+
+    /** *Close Database */
+    public void closeDB() {
+        db.close();
+    }
 
 
 }

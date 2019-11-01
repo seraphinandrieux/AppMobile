@@ -14,14 +14,15 @@ import java.io.IOException;
 
 public class PlayerService extends Service implements MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener {
 
-    private final Binder binder = new PlayerBinder();
-    private boolean musicOnPause = false;
-    private MediaPlayer myMediaPlayer = null;
-    private static final String ACTION_PLAY = "com.example.action.PLAY";
+    private final  Binder   binder          = new PlayerBinder();
+    private boolean         musicOnPause    = false;
+    private MediaPlayer     myMediaPlayer   = null;
 
     @Override
     public void onCreate() {
+
         super.onCreate();
+
         myMediaPlayer = new MediaPlayer(); // initialize it here
 
         myMediaPlayer.setOnPreparedListener(this);
@@ -29,9 +30,6 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
     }
 
     public void initMediaPlayer(String myPath){
-        //myMediaPlayer = new MediaPlayer();
-
-
 
         try {
             myMediaPlayer.setDataSource(myPath);
@@ -42,16 +40,13 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
         }
         myMediaPlayer.setOnErrorListener(this);
 
-        //mediaPlayer.setDataSource(this, myUri);
 
 
     }
 
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //if (intent.getAction().equals(ACTION_PLAY)) {
-             // prepare async to not block main thread
-        //}
+
 
         return START_STICKY_COMPATIBILITY;
     }
@@ -69,8 +64,7 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
 
         myMediaPlayer.stop();
         myMediaPlayer.reset();
-        //myMediaPlayer.release();
-        //myMediaPlayer = null;
+
 
     }
 
@@ -82,20 +76,24 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+
         return binder;
     }
 
     public void onPrepared(MediaPlayer player) {
+
         myMediaPlayer.start();
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+
         return false;
     }
 
     public class PlayerBinder extends Binder {
         public PlayerService getService() {
+
             return PlayerService.this;
         }
     }

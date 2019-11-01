@@ -1,6 +1,7 @@
 package cpe.mobile.mybrowzik.webServices;
 
 
+import android.database.sqlite.SQLiteDatabase;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -15,9 +16,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
+import cpe.mobile.mybrowzik.listeners.MyDBListener;
 import cpe.mobile.mybrowzik.listeners.MyHttpListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
+import cpe.mobile.mybrowzik.models.DbConstants;
+import cpe.mobile.mybrowzik.models.DbRequestType;
+import cpe.mobile.mybrowzik.services.DBService;
 
 
 public class LastFMService extends Thread {
@@ -28,43 +34,46 @@ public class LastFMService extends Thread {
     private JSONObject responseRequest;
     private AudioFile audioFile;
     private MyHttpListener listener;
+    private MyDBListener myDBListener;
+    private ImageView albumImage;
     //private String artist;
 
-    public LastFMService(AudioFile audioFile,MyHttpListener listener) {
-        this.audioFile = audioFile;
-        this.listener = listener;
+    public LastFMService(AudioFile audioFile, MyHttpListener listener, MyDBListener myDBListener, ImageView albumImage) {
+
+        this.audioFile          = audioFile;
+        this.listener           = listener;
+        this.myDBListener       = myDBListener;
+        this.albumImage         = albumImage;
+
 
     }
 
     public void run() {
+
         this.responseRequest = getInfoTrack(this.audioFile.getTitle(), this.audioFile.getArtist());
-        updateEmptyInfoFromAudioFile();
-    }
 
-    public void updateEmptyInfoFromAudioFile() {
-        listener.setAlbum(getAlbum());
+        //Update DB with news infos
+        updateDB();
 
-        listener.setAlbumPath(getAlbumPath());
-
-        // we start another thread which will get back a bitmap of the image which is pointed with the albumPath
-        ImageAlbumService myImageAlbumService = new ImageAlbumService(getAlbumPath(),listener); // we inside the url + the listener which contains the ImageView to update
+        //update image view album
+        ImageAlbumService myImageAlbumService = new ImageAlbumService(getAlbumPath(),albumImage); // we inside the url + the listener which contains the ImageView to update
         myImageAlbumService.start();
 
-
-
     }
+
+
 
 
     public JSONObject getInfoTrack(String track, String artist) {
         String tempUrl = urlAPI + "/2.0/?method=track.getInfo&api_key=" + MY_API_KEY + "&artist=" + artist + "&track=" + track + "&format=json";
         InputStream istream;
         JSONObject jsonObject =null;
-
+        System.out.println("lalala");
         try {
             //tempUrl = tempUrl.replace(",","");
             //tempUrl = tempUrl.replace(" ","%20");
             URL url = new URL(tempUrl);
-            System.out.println(url);
+
 
             HttpURLConnection c;
             try {
@@ -73,6 +82,7 @@ public class LastFMService extends Thread {
                 c.setDoInput(true);
                 c.setRequestProperty("Accept", "*/*");
                 istream = c.getInputStream();
+
 
                 InputStreamReader isr = new InputStreamReader(istream);
                 BufferedReader br = new BufferedReader(isr);
@@ -90,21 +100,24 @@ public class LastFMService extends Thread {
                     jsonObject = new JSONObject(resp);
 
                 } catch (JSONException e) {
-
+                    br.close();
                     System.out.println(e);
+                    istream.close();
                 }
 
-
+                br.close();
                 istream.close();
+
 
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println(tempUrl);
+
             }
         } catch (MalformedURLException e) {
             System.out.println(e);
-        }
 
+        }
         return jsonObject;
 
 
@@ -112,13 +125,11 @@ public class LastFMService extends Thread {
 
     public String getAlbumPath() { // will find the link to the big image
         String lreturn = "";
-        System.out.println(this.responseRequest);
         try {
             lreturn = this.responseRequest.getJSONObject("track").getJSONObject("album").getJSONArray("image").getJSONObject(2).getString("#text");
         } catch (JSONException e) {
             System.out.println(e);
         }
-        System.out.println("url de album "+ lreturn);
         return lreturn;
     }
 
@@ -129,9 +140,58 @@ public class LastFMService extends Thread {
         } catch (JSONException e) {
             System.out.println(e);
         }
+
+
         return lreturn;
     }
 
+    public Integer getYear() { // return album year
+        Integer lreturn = 0;
+        String lstrReturn = "";
+        try {
+
+            lstrReturn = this.responseRequest.getJSONObject("track").getJSONObject("wiki").getString("published");
+
+            try{
+                lstrReturn = lstrReturn.split(",")[0];
+
+                lreturn= Integer.parseInt( lstrReturn.substring(lstrReturn.length()-4) );
+            }catch(NumberFormatException e){
+                System.out.println(e);
+            }
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
+        return lreturn;
+    }
+
+    public String getGenre() { // return album name
+        String lreturn = "";
+        try {
+            lreturn = this.responseRequest.getJSONObject("track").getJSONObject("toptags").getJSONArray("tag").getJSONObject(0).getString("name");
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
+
+
+        return lreturn;
+    }
+
+
+    public void updateDB(){ //Once we get back info from this song we write on DB these news infos
+        try {
+            myDBListener.updateMyDB(audioFile.getTitle(), audioFile.getArtist(), getAlbum(), getGenre(), getYear(), getAlbumPath());
+
+            //We don't forget to update the viewHolder which could be already generated before the get back;
+            listener.setAlbum(getAlbum());
+            listener.setAlbumPath(getAlbumPath());
+            listener.setGenre(getGenre());
+            listener.setYear(getYear());
+        }catch(NullPointerException e){
+            System.out.println(e);
+        }
+
+    }
 
 
 

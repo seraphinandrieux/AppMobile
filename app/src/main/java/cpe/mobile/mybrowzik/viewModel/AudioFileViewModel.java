@@ -42,8 +42,6 @@ public class AudioFileViewModel extends BaseObservable {
 
     @Bindable
     public String getAlbum() {
-        //fmService.start();
-        //fmService.getInfoTrack(audioFile.getTitle(),audioFile.getArtist());
         return audioFile.getAlbum();
 
     }
@@ -52,13 +50,6 @@ public class AudioFileViewModel extends BaseObservable {
     public String getAlbumPath() {
 
         return audioFile.getAlbumPath();
-
-    }
-
-    @Bindable
-    public ImageView getAlbumImage() {
-
-        return audioFile.getAlbumImage();
 
     }
 
