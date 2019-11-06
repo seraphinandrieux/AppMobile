@@ -11,13 +11,6 @@
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/musicListLayout"
-            android:layout_width="match_parent"
-            android:layout_height="648dp">
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/musicManagerLayout"
             android:layout_width="match_parent"
 
@@ -25,5 +18,22 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/musicListLayout"
+            android:layout_width="match_parent"
+            android:layout_height="430dp">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/changeViewLayout"
+            android:layout_width="match_parent"
+
+            android:layout_height="220dp">
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 </layout>

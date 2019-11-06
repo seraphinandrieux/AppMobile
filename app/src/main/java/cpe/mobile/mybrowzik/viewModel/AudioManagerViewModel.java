@@ -7,6 +7,8 @@ import cpe.mobile.mybrowzik.models.AudioFile;
 
 public class AudioManagerViewModel extends BaseObservable {
 
+    //TODO Remove it and use only the audioFileManager
+
     private AudioFile audioFile = new AudioFile();
 
 

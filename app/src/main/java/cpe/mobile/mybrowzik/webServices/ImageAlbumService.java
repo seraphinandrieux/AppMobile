@@ -34,21 +34,21 @@ import cpe.mobile.mybrowzik.viewModel.AudioFileViewModel;
 
 public class ImageAlbumService extends Thread {
 
-    private String myURL;
-    private MyHttpListener listener;
+    private String      myURL;
+    private ImageView   image;
 
 
-    public ImageAlbumService(String myURL, MyHttpListener listener) {
+    public ImageAlbumService(String myURL, ImageView myImage) {
         this.myURL = myURL;
-        this.listener = listener;
+        this.image = myImage;
 
     }
 
     public void run() {
-        ImageView myImage = listener.getMyCurrentImageView();
-        
+
+
         try {
-            new DownloadImageFromInternet( myImage)
+            new DownloadImageFromInternet( this.image)
                     .execute(myURL);
 
         }catch(NullPointerException e){
@@ -68,11 +68,13 @@ public class ImageAlbumService extends Thread {
         }
 
         protected Bitmap doInBackground(String... urls) {
+
             String imageURL = urls[0];
-            Bitmap bimage = null;
+            Bitmap bimage   = null;
+
             try {
-                InputStream in = new java.net.URL(imageURL).openStream();
-                bimage = BitmapFactory.decodeStream(in);
+                InputStream in  = new java.net.URL(imageURL).openStream();
+                bimage          = BitmapFactory.decodeStream(in);
 
             } catch (Exception e) {
                 Log.e("Error Message", e.getMessage());

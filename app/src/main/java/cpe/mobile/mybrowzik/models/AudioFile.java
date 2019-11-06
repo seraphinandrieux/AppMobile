@@ -16,7 +16,6 @@ public class AudioFile {
     private int year;
     private int duration;
     private String albumPath;
-    private ImageView albumImage;
 
     public AudioFile(String pTitle,String pArtist,String pAlbum,int pyear,int pDuration,String pFilePath){
         title = pTitle;
@@ -25,7 +24,6 @@ public class AudioFile {
         year   = pyear;
         duration = pDuration;
         filePath = pFilePath;
-        //albumImage = findViewById(R.id.imageView2);
 
     }
 
@@ -86,11 +84,6 @@ public class AudioFile {
 
     public String getAlbumPath() { return albumPath; }
 
-    public ImageView getAlbumImage(){
-        return albumImage;
-    }
-
-    public void setAlbumImage(ImageView albumImage){ this.albumImage = albumImage;}
 
     public void setAlbumPath(String albumPath) {
 

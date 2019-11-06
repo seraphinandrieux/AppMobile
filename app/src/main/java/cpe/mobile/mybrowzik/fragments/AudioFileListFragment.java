@@ -1,5 +1,6 @@
 package cpe.mobile.mybrowzik.fragments;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import cpe.mobile.mybrowzik.listeners.MyDBListener;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
 import cpe.mobile.mybrowzik.R;
@@ -27,6 +29,7 @@ public class AudioFileListFragment extends Fragment {
 
 
     private MyListener myListener;
+    private MyDBListener myDBListener;
     public void setMyListener(MyListener listener){
         myListener = listener;
     }
@@ -56,11 +59,17 @@ public class AudioFileListFragment extends Fragment {
         AudioFileListFragmentBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.audio_file_list_fragment,container,false);
 
-        binding.audioFileList.setAdapter(new AudioFileListAdapter(audioList,myListener));
+        binding.audioFileList.setAdapter(new AudioFileListAdapter(audioList,myListener,myDBListener));
         binding.audioFileList.setLayoutManager(
                 new LinearLayoutManager(binding.getRoot().getContext())
         );
 
         return binding.getRoot();
+    }
+
+
+
+    public void setMyDBListener(MyDBListener myDBListener) {
+        this.myDBListener = myDBListener;
     }
 }
