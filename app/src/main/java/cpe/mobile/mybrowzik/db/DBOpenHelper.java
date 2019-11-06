@@ -10,10 +10,7 @@ import cpe.mobile.mybrowzik.models.DbConstants;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
 
-    private static DBOpenHelper mInstance = null;
-
-    private Context mContext;
-
+   
     /**
      * @goals This class aims to show the constant to use for the DBOpenHelper
      */
@@ -59,7 +56,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     public DBOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
                         int version) {
         super(context, name, factory, version);
-        this.mContext=context;
+
     }
 
     @Override
@@ -88,7 +85,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
         // or do a smartest stuff
     }
-
 
 }
 

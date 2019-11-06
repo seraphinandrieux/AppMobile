@@ -103,6 +103,8 @@ public class AudioFile {
         return String.format(Locale.getDefault(),"%02d:%02d",minute,second);
     }
 
+
+
     public void setDuration(int duration) {
         this.duration = duration;
     }

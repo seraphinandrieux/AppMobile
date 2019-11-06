@@ -1,5 +1,7 @@
 package cpe.mobile.mybrowzik.viewModel;
 
+import android.widget.ProgressBar;
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
@@ -10,6 +12,8 @@ public class AudioManagerViewModel extends BaseObservable {
     //TODO Remove it and use only the audioFileManager
 
     private AudioFile audioFile = new AudioFile();
+    private Integer   progress  = 0;
+
 
 
     public void setAudioFile(AudioFile file) {
@@ -55,9 +59,20 @@ public class AudioManagerViewModel extends BaseObservable {
     }
 
     @Bindable
-    public String getDuration() {
+    public Integer getProgressMax() {
 
-        return audioFile.getDurationText();
+        return audioFile.getDuration();
 
+    }
+
+    @Bindable
+    public Integer getProgress() {
+
+        return audioFile.getDuration();
+
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
     }
 }

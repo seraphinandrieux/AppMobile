@@ -37,8 +37,11 @@ import cpe.mobile.mybrowzik.databinding.ActivityMainBinding;
 import cpe.mobile.mybrowzik.db.DBOpenHelper;
 import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
+<<<<<<< HEAD
 import cpe.mobile.mybrowzik.fragments.ChangeViewFragment;
 import cpe.mobile.mybrowzik.listeners.ChangeViewListener;
+=======
+>>>>>>> a944b3892509cd50223fef63997b3b8983e1c65b
 import cpe.mobile.mybrowzik.listeners.MyDBListener;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
@@ -73,7 +76,8 @@ public  class MainActivity  extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private List<AudioFile> myMusicList = new ArrayList<>();
-
+    public SQLiteDatabase db;
+    public DBOpenHelper dbOpenHelper;
 
 
     public SQLiteDatabase db;
@@ -89,12 +93,14 @@ public  class MainActivity  extends AppCompatActivity {
     PlayerService mService;
     boolean mBound = false;
 
+
     private static Context context;
 
 
 
 
     //----------------------------------------------------Main functions-----------------------------------------------------------------------------
+
     public void showStartup() {
         makeActionWithPermission();
         FragmentManager manager = getSupportFragmentManager();
@@ -116,6 +122,7 @@ public  class MainActivity  extends AppCompatActivity {
         MyListener listener = initListener(fragment,fragmentManager);
         fragment.setMyListener(listener);
 
+
         dbOpenHelper = new DBOpenHelper(this,DbConstants.DATABASE_NAME, null, DbConstants.DATABASE_VERSION);
 
         openDB();
@@ -126,6 +133,9 @@ public  class MainActivity  extends AppCompatActivity {
 
         myDBListener = initMyDBListener(dbService);
 
+
+
+        MyDBListener myDBListener = initMyDBListener(new DBService(db));
 
         fragment.setMyDBListener(myDBListener);
         fragmentManager.setMyListener(listener);
@@ -145,14 +155,15 @@ public  class MainActivity  extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         MainActivity.context = getApplicationContext();
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
 
 
-        //writeOnDB();
-        //getDbInfo();
+        
+
         showStartup();
 
 
@@ -285,6 +296,7 @@ public  class MainActivity  extends AppCompatActivity {
             public void onPlayMusic(String filePath) {
                 try {
                     mService.play();
+
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -298,11 +310,20 @@ public  class MainActivity  extends AppCompatActivity {
 
 
             }
+
+            @Override
+            public Integer getProgress() {
+
+                return mService.getProgress();
+
+
+            }
         };
         return listener ;
     }
 
     //----------------------------------------Listener DB + DB debug functions----------------------------------------------
+
 
     public static MyDBListener getDBListenerInstance(Context cxt){
         if(myDBListener==null){
@@ -310,6 +331,7 @@ public  class MainActivity  extends AppCompatActivity {
         }
         return myDBListener;
     }
+
 
     public MyDBListener initMyDBListener(DBService myDbService){
         MyDBListener myDBListener = new MyDBListener() {
@@ -343,6 +365,7 @@ public  class MainActivity  extends AppCompatActivity {
                     myDbService.executeRequest(DbRequestType.INSERT,DbConstants.MUSIC_TABLE,null,new String[]{title,artistID.toString(),albumID.toString(),genreID.toString()});
                 }
             }
+
 
             @Override
             public String getAlbumFromID(Integer id){
@@ -543,10 +566,10 @@ public  class MainActivity  extends AppCompatActivity {
         db.close();
     }
 
+
     public SQLiteDatabase getDb() {
         return db;
     }
-
 
 
 }

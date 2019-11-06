@@ -1,13 +1,17 @@
 package cpe.mobile.mybrowzik.listeners;
 
+
 import android.database.Cursor;
 
-import java.io.Serializable;
+
 import java.util.ArrayList;
 
 import cpe.mobile.mybrowzik.models.AudioFile;
 
-public interface MyDBListener extends Serializable {
+
+
+public interface MyDBListener {
+
 
     public void updateMyDB(String title,String artist,String album,String genre,Integer Year,String imageAlbumUrl);
 

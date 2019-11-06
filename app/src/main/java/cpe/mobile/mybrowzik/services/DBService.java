@@ -1,31 +1,35 @@
 package cpe.mobile.mybrowzik.services;
 
 import android.content.ContentValues;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+
 import android.database.sqlite.SQLiteQueryBuilder;
 
 import java.util.ArrayList;
 
+
 import cpe.mobile.mybrowzik.db.DBOpenHelper;
 import cpe.mobile.mybrowzik.listeners.MyDBListener;
+
 import cpe.mobile.mybrowzik.models.DbConstants;
 import cpe.mobile.mybrowzik.models.DbRequestType;
 
 public class DBService {
 
+
     private  static DBService dbService;
     private DBOpenHelper dbOpenHelper;
+
     private SQLiteDatabase db;
 
 
     public DBService(SQLiteDatabase db){
 
         this.db = db;
-
-
 
     }
 
@@ -35,6 +39,7 @@ public class DBService {
 
     public SQLiteDatabase getDb() {
         return db;
+
     }
 
 
@@ -240,11 +245,13 @@ public class DBService {
     }
 
 
+
     public Cursor getAllTable(String table,String[] projection) {
         Cursor cursor;
         cursor = db.query(table,projection,null,null,null,null,null,null);
         return cursor;
     }
+
 
     public boolean checkIfExist(String myTable,String[] valueToCheck, String columnToCheck){
         boolean lreturn = false;
@@ -256,11 +263,6 @@ public class DBService {
 
         return lreturn;
     }
-
-
-
-
-
 
 
 

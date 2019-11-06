@@ -73,6 +73,17 @@ public class PlayerService extends Service implements MediaPlayer.OnErrorListene
         myMediaPlayer.pause();
     }
 
+    public Integer getProgress(){
+        return myMediaPlayer.getCurrentPosition();
+    }
+
+    public Integer getProgressMax(){
+        return myMediaPlayer.getDuration();
+    }
+
+    public boolean isPlaying(){
+        return myMediaPlayer.isPlaying();
+    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
