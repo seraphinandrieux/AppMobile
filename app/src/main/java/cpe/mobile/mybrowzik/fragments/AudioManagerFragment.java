@@ -147,7 +147,7 @@ public class AudioManagerFragment extends Fragment {
                 if(musicIsSelected()){
 
                     myListener.onPauseMusic();
-                    progressBarThread.interrupt();
+                    
                 }
             }
         });

@@ -37,11 +37,10 @@ import cpe.mobile.mybrowzik.databinding.ActivityMainBinding;
 import cpe.mobile.mybrowzik.db.DBOpenHelper;
 import cpe.mobile.mybrowzik.fragments.AudioFileListFragment;
 import cpe.mobile.mybrowzik.fragments.AudioManagerFragment;
-<<<<<<< HEAD
+
 import cpe.mobile.mybrowzik.fragments.ChangeViewFragment;
 import cpe.mobile.mybrowzik.listeners.ChangeViewListener;
-=======
->>>>>>> a944b3892509cd50223fef63997b3b8983e1c65b
+
 import cpe.mobile.mybrowzik.listeners.MyDBListener;
 import cpe.mobile.mybrowzik.listeners.MyListener;
 import cpe.mobile.mybrowzik.models.AudioFile;
@@ -79,9 +78,6 @@ public  class MainActivity  extends AppCompatActivity {
     public SQLiteDatabase db;
     public DBOpenHelper dbOpenHelper;
 
-
-    public SQLiteDatabase db;
-    public DBOpenHelper dbOpenHelper;
 
     private static MyDBListener myDBListener;
 
