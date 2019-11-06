@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cpe.mobile.mybrowzik.MainActivity;
 import cpe.mobile.mybrowzik.R;
 import cpe.mobile.mybrowzik.databinding.AudioManagerFragmentBinding;
 import cpe.mobile.mybrowzik.listeners.MyListener;
@@ -32,6 +35,9 @@ public class AudioManagerFragment extends Fragment {
 
     private AudioManagerViewModel viewModel = new AudioManagerViewModel();
     private MyListener myListener;
+    private Thread progressBarThread;
+    private ProgressBar progressBar;
+
 
 
 
@@ -64,6 +70,7 @@ public class AudioManagerFragment extends Fragment {
     }
 
     public AudioFile getCurrentMusic(){
+
         return viewModel.getAudioFile();
     }
 
@@ -78,36 +85,87 @@ public class AudioManagerFragment extends Fragment {
 
         AudioManagerFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.audio_manager_fragment,container,false);
 
-            binding.setAudioManagerViewModel(viewModel);
+        binding.setAudioManagerViewModel(viewModel);
+        progressBar = binding.progressMusicBar;
+        /*progressBarThread =new Thread(new Runnable() {
+            public void run() {
+                while (myListener.getProgress() < viewModel.getProgressMax() || myListener ) {
+
+                    // Update the progress bar and display the
+                    //current value in the text view
+                    viewModel.setProgress(myListener.getProgress());
+                    progressBar.setProgress(myListener.getProgress());
+                    try {
+                        // Sleep for 200 milliseconds.
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });*/
+
+
             binding.NextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    myListener.onNextMusic();
+                    if(musicIsSelected()){
+                        myListener.onNextMusic();
+                        //progressBarThread.interrupt();
+
+                    }
                 }
             });
 
         binding.PreviousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myListener.onPreviousMusic();
+
+                if(musicIsSelected()) {
+                    myListener.onPreviousMusic();
+                    //progressBarThread.interrupt();
+                }
             }
         });
 
         binding.PlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myListener.onPlayMusic(viewModel.getPath());
+                if(musicIsSelected()) {
+                    myListener.onPlayMusic(viewModel.getPath());
+
+                   // progressBarThread.start();
+
+                }
+
             }
         });
 
         binding.PauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myListener.onPauseMusic();
+                if(musicIsSelected()){
+
+                    myListener.onPauseMusic();
+                    progressBarThread.interrupt();
+                }
             }
         });
 
         return binding.getRoot();
+    }
+
+    public boolean musicIsSelected(){
+        boolean lreturn =false;
+
+        if(getCurrentMusic().getTitle()==null){
+            Toast.makeText(getContext(),"Any music selected, please select one :)", Toast.LENGTH_LONG).show();
+
+        }else{
+            lreturn = true;
+        }
+
+        return lreturn;
     }
 
 

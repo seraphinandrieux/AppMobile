@@ -203,6 +203,7 @@ public  class MainActivity  extends AppCompatActivity  {
             public void onPlayMusic(String filePath) {
                 try {
                     mService.play();
+
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -213,6 +214,14 @@ public  class MainActivity  extends AppCompatActivity  {
             public void onPauseMusic() {
 
                 mService.pause();
+
+
+            }
+
+            @Override
+            public Integer getProgress() {
+
+                return mService.getProgress();
 
 
             }

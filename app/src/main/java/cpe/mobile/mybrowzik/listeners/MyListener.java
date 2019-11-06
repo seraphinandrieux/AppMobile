@@ -14,4 +14,6 @@ public interface MyListener {
 
     public void onPauseMusic();
 
+    public Integer getProgress();
+
 }
